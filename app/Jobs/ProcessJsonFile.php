@@ -32,7 +32,7 @@ class ProcessJsonFile implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param  App\Services\ProcessFile  $processFile
+     * @param ProcessFile  $processFile
      * @return void
      */
     public function handle(ProcessFile $processFile)
