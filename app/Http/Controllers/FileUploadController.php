@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -11,18 +11,17 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FileUploadRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Carbon\Carbon;
 
 class FileUploadController extends Controller
 {
-    protected $processFile;
-
      /**
      * Get the uploaded file and save it locally, then begin upload from the locally stored file.
      *
      * @param FileUploadRequest $request
      * @return JsonResponse
      */
-    public function __invoke(FileUploadRequest $request)
+    public function __invoke(FileUploadRequest $request): JsonResponse
     {
         $uploadedFile = $request['file'];
 
@@ -36,20 +35,6 @@ class FileUploadController extends Controller
         
         if ($fileExtension == 'json') {
             ProcessJsonFile::dispatch($savedFilePath);
-        } elseif ($fileExtension == 'csv') {
-           //Not available Yet!
-           return $this->errorResponse(
-                [],
-                'Sorry, only JSON file are supported at the moment.',
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        } elseif ($fileExtension == 'xml') {
-            //Not available Yet!
-            return $this->errorResponse(
-                null,
-                'Sorry, only JSON file are supported at the moment.',
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
         } else {
             return $this->errorResponse(
                 null,

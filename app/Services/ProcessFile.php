@@ -5,9 +5,10 @@ namespace App\Services;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\DateTimeManipulator;
-use App\Models\User;
-use App\Models\CreditCard;
 use Illuminate\Support\Facades\DB;
+use App\Services\Filters\Age;
+use App\Models\CreditCard;
+use App\Models\User;
 
 class ProcessFile
 {
@@ -19,20 +20,15 @@ class ProcessFile
         {
             foreach ($data as $result)
             {
-                $dateOfBirth = date('Y-m-d H:i:s', strtotime($result['date_of_birth']));
-                if (
-                    (DateTimeManipulator::dateDifferenceFromNow($dateOfBirth) >= 18)
-                    &&
-                    (DateTimeManipulator::dateDifferenceFromNow($dateOfBirth) <= 65)
-                ) {
-                    DB::transaction(function () use ($result, $dateOfBirth){
+                if (Age::filter($result['date_of_birth']) === true) {
+                    DB::transaction(function () use ($result){
                         $user = User::create([
                             'name' => $result['name'],
                             'address' => $result['address'],
                             'checked' => $result['checked'],
                             'description' => $result['description'],
                             'interest' => $result['interest'],
-                            'date_of_birth' => $dateOfBirth,
+                            'date_of_birth' => date('Y-m-d H:i:s', strtotime($result['date_of_birth'])),
                             'email' => $result['email'],
                             'account' => $result['account']
                         ]);
@@ -50,11 +46,11 @@ class ProcessFile
 
     public function processCSV()
     {
-        # code...
+        # If we want to process CSV, we write the method to process here...
     }
 
     public function processXML()
     {
-        # code...
+        # If we want to process XML, we write the method to process here...
     }
 }
